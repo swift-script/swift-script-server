@@ -1,10 +1,8 @@
 import Foundation
 import Kitura
-import KituraCORS
 import SwiftScript
 
 let router = Router()
-
 
 router.get("/", middleware: StaticFileServer())
 
