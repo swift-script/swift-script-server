@@ -4,13 +4,8 @@ import SwiftScript
 
 let router = Router()
 
-// Handle HTTP GET requests to /
-router.get("/") { request, response, next in
-    response.send("try? Swift 2017")
-    next()
-}
 
-
+router.get("/", middleware: StaticFileServer())
 
 router.post("/") { request, response, next in
     guard let value = try request.readString() else {
