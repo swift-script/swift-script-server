@@ -4,7 +4,6 @@ import SwiftScript
 
 let router = Router()
 
-
 router.get("/", middleware: StaticFileServer())
 
 router.post("/") { request, response, next in
@@ -15,7 +14,6 @@ router.post("/") { request, response, next in
     }
 
     let message = try transpile(code: value)
-    response.send("Your Input was : \(value)\n")
     response.send(message)
     response.send("\n")
     try response.end()
