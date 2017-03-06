@@ -1,11 +1,17 @@
 import Foundation
 import Kitura
+import KituraCORS
 import SwiftScript
 
+
+
 let router = Router()
+let options = Options()
+let cors = CORS(options: options)
 
 router.get("/", middleware: StaticFileServer())
 
+router.post("/", middleware: cors)
 router.post("/") { request, response, next in
     guard let value = try request.readString() else {
         response.send(status: .badRequest).send("; needs body\n")
