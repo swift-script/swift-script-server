@@ -74,26 +74,24 @@ public class SSController {
 
     func compile(_ urlString: String) -> (status: Int, text: String?) {
         let url = URL(fileURLWithPath: urlString + ".swift")
-        let binaryUrl = URL(fileURLWithPath: urlString)
         let pipe = Pipe()
 
         #if os(Linux)
             let task = Task()
             task.launchPath = "/home/ubuntu/swift/usr/bin/swiftc"
-            task.arguments =  [url.path, "-o", binaryUrl.path]
+            task.arguments =  ["-parse", url.path]
             task.standardError = pipe
             task.launch()
             task.waitUntilExit()
         #else
             let task = Process()
             task.launchPath = "/bin/sh"
-            task.arguments = ["swiftc", url.path, "-o", binaryUrl.path]
+            task.arguments =  ["swiftc", "-parse", url.path]
             task.standardError = pipe
             task.launch()
             task.waitUntilExit()
         #endif
         try? FileManager.default.removeItem(at: url)
-        try? FileManager.default.removeItem(at: binaryUrl)
 
         guard task.terminationStatus == 0 else {
             let data = pipe.fileHandleForReading.availableData
