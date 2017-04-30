@@ -40,7 +40,9 @@ public class SSController {
         response.headers["Content-Type"] = "text/plain; charset=utf-8"
         guard let value = try request.readString() else {
             response.send("could not parse body\n")
-            Log.error("request.body: \(request.body)")
+            if let body = request.body {
+                Log.error("request.body: \(body)")
+            }
             try response.end()
             return
         }
@@ -76,21 +78,12 @@ public class SSController {
         let url = URL(fileURLWithPath: urlString + ".swift")
         let pipe = Pipe()
 
-        #if os(Linux)
-            let task = Task()
-            task.launchPath = "/home/ubuntu/swift/usr/bin/swiftc"
-            task.arguments =  ["-parse", url.path]
-            task.standardError = pipe
-            task.launch()
-            task.waitUntilExit()
-        #else
-            let task = Process()
-            task.launchPath = "/bin/sh"
-            task.arguments =  ["swiftc", "-parse", url.path]
-            task.standardError = pipe
-            task.launch()
-            task.waitUntilExit()
-        #endif
+        let task = Process()
+        task.launchPath = "/bin/sh"
+        task.arguments =  ["swiftc", "-parse", url.path]
+        task.standardError = pipe
+        task.launch()
+        task.waitUntilExit()
         try? FileManager.default.removeItem(at: url)
 
         guard task.terminationStatus == 0 else {
