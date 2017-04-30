@@ -56,7 +56,7 @@ public class SSController {
 
         Log.verbose("swift: `\(value)`")
         do {
-            let message = try transpile(code: value)
+            let message = try transpile(value)
             Log.verbose("javascript: `\(message)`")
             response.status(.OK).send(message)
         } catch let e {
